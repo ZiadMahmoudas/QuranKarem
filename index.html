@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المصحف الشريف | الواجهة الرئيسية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #c9a84c;
+            --gold-light: #e8cc7a;
+            --gold-dark: #8b6914;
+            --cream: #fdf6e3;
+            --brown-deep: #0f0a05;
+            --brown-soft: #1c130a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Amiri', serif;
+            background-color: var(--brown-deep);
+            color: var(--cream);
+            overflow: hidden; /* لمنع السكرول في الواجهة الرئيسية */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* خلفية النجوم */
+        #stars {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            background: radial-gradient(circle at center, var(--brown-soft) 0%, var(--brown-deep) 100%);
+        }
+
+        /* النقوش الإسلامية الخفيفة */
+        .geo-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            opacity: 0.15;
+            background-image: url('https://www.transparenttextures.com/patterns/islamic-art.png');
+            pointer-events: none;
+        }
+
+        /* الحاوية الرئيسية */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        /* الزخارف الخطية */
+        .deco-line {
+            width: min(250px, 50vw);
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 10px 0;
+            opacity: 0;
+            animation: expandLine 1.5s ease forwards 0.3s;
+        }
+
+        /* الشعار */
+        .logo-area {
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 0.5s;
+        }
+        .logo-area img {
+            width: 80px;
+            height: auto;
+            filter: drop-shadow(0 0 10px var(--gold));
+        }
+
+        /* البسملة */
+        .bismillah {
+            font-family: 'Scheherazade New', serif;
+            font-size: clamp(1.4rem, 4vw, 2.2rem);
+            color: var(--gold-light);
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 0.8s;
+        }
+
+        /* العنوان الرئيسي */
+        .main-title {
+            font-family: 'Scheherazade New', serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            line-height: 1.2;
+            margin: 0.5rem 0;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 1s;
+        }
+        .main-title span {
+            color: var(--gold-light);
+            display: block;
+            font-weight: 700;
+        }
+
+        /* الوصف */
+        .subtitle {
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            color: rgba(253, 246, 227, 0.6);
+            letter-spacing: 1px;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 1.2s;
+        }
+
+        /* الآية الكريمة */
+        .ayah-box {
+            margin: 2vh 0;
+            padding: 15px;
+            border-right: 2px solid var(--gold-dark);
+            border-left: 2px solid var(--gold-dark);
+            opacity: 0;
+            animation: fadeIn 1.2s ease forwards 1.5s;
+        }
+        .ayah-quote {
+            font-family: 'Scheherazade New', serif;
+            font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+            color: var(--gold);
+            max-width: 600px;
+            font-style: italic;
+        }
+
+        /* زر الدخول المطور */
+        .enter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 2vh;
+            padding: 15px 45px;
+            background: rgba(201, 168, 76, 0.1);
+            border: 1px solid var(--gold);
+            border-radius: 50px;
+            color: var(--gold-light);
+            font-size: 1.4rem;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 1.8s;
+            backdrop-filter: blur(5px);
+        }
+
+        .enter-btn:hover {
+            background: var(--gold);
+            color: var(--brown-deep);
+            box-shadow: 0 0 30px rgba(201, 168, 76, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .enter-btn .arrow {
+            transition: transform 0.3s;
+        }
+        .enter-btn:hover .arrow {
+            transform: translateX(-8px);
+        }
+
+        /* نسخة التطبيق في الأسفل */
+        .footer-badge {
+            position: absolute;
+            bottom: 3px;
+            font-size: 0.8rem;
+            color: rgba(253, 246, 227, 0.3);
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 2s;
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes expandLine {
+            from { width: 0; opacity: 0; }
+            to { width: min(250px, 50vw); opacity: 1; }
+        }
+
+        /* تأثير الخروج */
+        body.exit-active {
+            transition: opacity 0.6s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* تحسينات للشاشات الصغيرة جداً */
+        @media (max-height: 600px) {
+            .ayah-box { display: none; } /* إخفاء الآية في الشاشات القصيرة جداً لتوفير مساحة */
+            .logo-area img { width: 50px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="stars"></canvas>
+    <div class="geo-overlay"></div>
+
+    <main class="main-container">
+        <div class="logo-area">
+            <img src="images/logo.webp" alt="Logo">
+        </div>
+
+        <div class="deco-line"></div>
+
+        <div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+        
+        <h1 class="main-title">
+            المصحف <span>الشريف</span>
+        </h1>
+
+        <p class="subtitle">القرآن الكريم كاملاً · تلاوة وختمة</p>
+
+        <div class="ayah-box">
+            <p class="ayah-quote">
+                ﴿ إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ ﴾
+            </p>
+        </div>
+
+        <div class="deco-line"></div>
+
+        <a href="reader.html" class="enter-btn" id="enterBtn">
+            <span>ادخل للمصحف</span>
+            <span class="arrow">←</span>
+        </a>
+
+        <div class="footer-badge">الإصدار الرقمي · 2026</div>
+    </main>
+
+    <script>
+        // Starfield Logic
+        const canvas = document.getElementById('stars');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = [];
+            for (let i = 0; i < 150; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 1.5,
+                    opacity: Math.random(),
+                    speed: 0.002 + Math.random() * 0.005
+                });
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(s => {
+                s.opacity += s.speed;
+                if (s.opacity > 1 || s.opacity < 0) s.speed *= -1;
+                ctx.fillStyle = `rgba(232, 204, 122, ${Math.abs(s.opacity)})`;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', init);
+        init();
+        animate();
+
+        // Smooth Exit
+        document.getElementById('enterBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = this.getAttribute('href');
+            document.body.classList.add('exit-active');
+            setTimeout(() => {
+                window.location.href = target;
+            }, 600);
+        });
+    </script>
+</body>
+</html>
