@@ -1,37 +1,35 @@
-const CACHE_NAME = 'quran-pwa-v2'; // غيرنا الرقم لـ v2 عشان نحدث الكاش
-const API_CACHE_NAME = 'quran-api-cache-v1';
+const CACHE_NAME = 'quran-pwa-v4'; // حدثنا الإصدار لـ v4
+const API_CACHE_NAME = 'quran-api-cache-v2';
 
-// حطينا كل ملفات مشروعك بالظبط زي ما هي عندك في الـ VS Code
+// مسارات الملفات من الجذر مباشرة (أضمن بكتير مع Netlify)
 const urlsToCache = [
-  './',
-  './index.html',
-  './index.css',
-  './index.js',
-  './reader.html',
-  './reader.css',
-  './reader.js',
-  './Athkar.html',
-  './Athkar.css',
-  './Athkar.js',
-  './Tasbih.html',
-  './Tasbih.css',
-  './Tasbih.js',
-  './manifest.json',
-  './images/logo.webp'
+  '/',
+  '/index.html',
+  '/index.css',
+  '/index.js',
+  '/reader.html',
+  '/reader.css',
+  '/reader.js',
+  '/Athkar.html',
+  '/Athkar.css',
+  '/Athkar.js',
+  '/Tasbih.html',
+  '/Tasbih.css',
+  '/Tasbih.js',
+  '/manifest.json',
+  '/images/logo.webp'
 ];
 
 self.addEventListener('install', event => {
-  self.skipWaiting();
+  self.skipWaiting(); // تفعيل الكاش الجديد فوراً
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened static cache v2');
-        return cache.addAll(urlsToCache);
-      })
+    caches.open(CACHE_NAME).then(cache => {
+      console.log('جاري تخزين ملفات الواجهة...');
+      return cache.addAll(urlsToCache);
+    })
   );
 });
 
-// الحدث ده بيمسح أي كاش قديم (v1) ويسيب الجديد بس عشان المساحة
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -47,34 +45,46 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // نتجاهل أي طلبات غير الـ GET
   if (event.request.method !== 'GET') return;
 
+  const reqUrl = new URL(event.request.url);
+
   event.respondWith(
-    caches.match(event.request).then(cachedResponse => {
-      if (cachedResponse) return cachedResponse;
+    (async () => {
+      try {
+        // 1. ندور على الملف زي ما هو في الكاش
+        const cachedResponse = await caches.match(event.request);
+        if (cachedResponse) return cachedResponse;
 
-      // الحل الذكي لمشكلة Netlify (بيزود .html من ورا الكواليس لو إنت أوفلاين)
-      let reqUrl = new URL(event.request.url);
-      if (event.request.mode === 'navigate' && !reqUrl.pathname.endsWith('.html') && !reqUrl.pathname.endsWith('/')) {
-        return caches.match(reqUrl.pathname + '.html').then(htmlMatch => {
+        // 2. الخدعة الذكية لـ Netlify: لو الرابط مفيهوش .html، نزودها وندور تاني في الكاش
+        if (event.request.mode === 'navigate' || !reqUrl.pathname.includes('.')) {
+          let htmlUrl = reqUrl.pathname;
+          if (!htmlUrl.endsWith('/')) {
+            htmlUrl += '.html';
+          }
+          const htmlMatch = await caches.match(htmlUrl);
           if (htmlMatch) return htmlMatch;
-          return fetch(event.request);
-        }).catch(() => fetch(event.request));
-      }
-
-      // جلب الآيات من الـ API وحفظها للكاش
-      return fetch(event.request).then(networkResponse => {
-        if (event.request.url.includes('api.quran.com')) {
-          const responseClone = networkResponse.clone();
-          caches.open(API_CACHE_NAME).then(cache => {
-            cache.put(event.request, responseClone);
-          });
         }
+
+        // 3. لو مش في الكاش خالص، نطلبه من النت
+        const networkResponse = await fetch(event.request);
+
+        // 4. لو الطلب ده آيات من الـ API، انسخه واحفظه أوفلاين
+        if (reqUrl.href.includes('api.quran.com')) {
+          const cache = await caches.open(API_CACHE_NAME);
+          cache.put(event.request, networkResponse.clone());
+        }
+
         return networkResponse;
-      }).catch(err => {
-        console.log('Offline and not cached:', event.request.url);
-      });
-    })
+
+      } catch (error) {
+        // 5. الحماية القصوى من الـ Crash! لو مفيش نت وكل اللي فات فشل، رجع الشاشة دي
+        console.log('فشل الاتصال: الموبايل أوفلاين');
+        return new Response('عفواً، لا يوجد اتصال بالإنترنت وهذا المحتوى غير محفوظ.', {
+          status: 503,
+          headers: new Headers({ 'Content-Type': 'text/plain; charset=utf-8' })
+        });
+      }
+    })()
   );
 });
