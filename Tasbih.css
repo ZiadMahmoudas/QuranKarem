@@ -1,0 +1,462 @@
+:root {
+    --gold: #c9a84c;
+    --gold-light: #e8cc7a;
+    --gold-dark: #8b6914;
+    --cream: #fdf6e3;
+    --brown: #0f0a05;
+    --brown2: #1c130a;
+    --brown3: #2a1c0e;
+    --green: #52b788;
+    --green-dark: #2d6a4f;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html,
+body {
+    height: 100%;
+    font-family: "Amiri", serif;
+    background: var(--brown);
+    color: var(--cream);
+    overflow-x: hidden;
+}
+
+/* ANIMATED BG */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 30%, rgba(201, 168, 76, 0.07) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+    animation: bgPulse 4s ease-in-out infinite;
+}
+@keyframes bgPulse {
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* GEO */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+        repeating-linear-gradient(
+            30deg,
+            transparent,
+            transparent 50px,
+            rgba(201, 168, 76, 0.015) 50px,
+            rgba(201, 168, 76, 0.015) 51px
+        ),
+        repeating-linear-gradient(
+            -30deg,
+            transparent,
+            transparent 50px,
+            rgba(201, 168, 76, 0.015) 50px,
+            rgba(201, 168, 76, 0.015) 51px
+        );
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* TOPBAR */
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: rgba(15, 10, 5, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.back-btn {
+    background: rgba(201, 168, 76, 0.09);
+    border: 1px solid rgba(201, 168, 76, 0.22);
+    color: var(--gold);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+.back-btn:hover {
+    background: rgba(201, 168, 76, 0.18);
+}
+.topbar-title {
+    font-family: "Scheherazade New", serif;
+    font-size: 1.4rem;
+    color: var(--gold-light);
+    flex: 1;
+}
+.session-display {
+    font-size: 0.78rem;
+    color: rgba(253, 246, 227, 0.35);
+    direction: ltr;
+}
+
+/* MAIN LAYOUT */
+.page {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 80px 20px 40px;
+}
+
+/* DHIKR SELECTOR */
+.dhikr-selector {
+    width: 100%;
+    max-width: 560px;
+    margin-bottom: 28px;
+}
+.selector-label {
+    font-size: 0.82rem;
+    color: rgba(253, 246, 227, 0.4);
+    margin-bottom: 8px;
+    text-align: center;
+}
+.dhikr-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+.dhikr-pill {
+    background: rgba(201, 168, 76, 0.07);
+    border: 1px solid rgba(201, 168, 76, 0.2);
+    color: rgba(253, 246, 227, 0.55);
+    padding: 7px 16px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-family: "Scheherazade New", serif;
+    font-size: 1rem;
+    transition: all 0.2s;
+    user-select: none;
+}
+.dhikr-pill:hover {
+    border-color: rgba(201, 168, 76, 0.4);
+    color: var(--cream);
+}
+.dhikr-pill.active {
+    background: rgba(201, 168, 76, 0.15);
+    border-color: var(--gold);
+    color: var(--gold-light);
+}
+
+/* CUSTOM INPUT */
+.custom-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    width: 100%;
+    max-width: 560px;
+}
+.custom-input {
+    flex: 1;
+    background: rgba(201, 168, 76, 0.07);
+    border: 1px solid rgba(201, 168, 76, 0.2);
+    color: var(--cream);
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-family: "Scheherazade New", serif;
+    font-size: 1rem;
+    outline: none;
+    text-align: right;
+    transition: border-color 0.2s;
+}
+.custom-input:focus {
+    border-color: var(--gold);
+}
+.custom-input::placeholder {
+    color: rgba(253, 246, 227, 0.25);
+}
+.custom-set-btn {
+    background: rgba(201, 168, 76, 0.1);
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    color: var(--gold);
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: "Amiri", serif;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.custom-set-btn:hover {
+    background: rgba(201, 168, 76, 0.2);
+}
+
+/* COUNTER CIRCLE */
+.counter-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0 12px;
+}
+
+.counter-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.counter-ring-bg {
+    fill: none;
+    stroke: rgba(201, 168, 76, 0.1);
+    stroke-width: 5;
+}
+.counter-ring-fill {
+    fill: none;
+    stroke: url(#ringGrad);
+    stroke-width: 5;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.35s ease;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.counter-inner {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, rgba(50, 30, 10, 0.95), rgba(20, 12, 4, 1));
+    border: 1px solid rgba(201, 168, 76, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+    transition: all 0.15s;
+    box-shadow: 0 0 0 0 rgba(201, 168, 76, 0);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+.counter-inner:active {
+    transform: scale(0.96);
+}
+.counter-inner.pulse-anim {
+    animation: counterPulse 0.3s ease;
+}
+@keyframes counterPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.4);
+    }
+    100% {
+        box-shadow: 0 0 0 28px rgba(201, 168, 76, 0);
+    }
+}
+.counter-inner.done-anim {
+    animation: donePulse 0.5s ease;
+}
+@keyframes donePulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(82, 183, 136, 0.5);
+    }
+    100% {
+        box-shadow: 0 0 0 40px rgba(82, 183, 136, 0);
+    }
+}
+
+.counter-num {
+    font-family: "Scheherazade New", serif;
+    font-size: 4rem;
+    color: var(--gold-light);
+    line-height: 1;
+    transition: all 0.15s;
+    font-weight: 700;
+}
+.counter-of {
+    font-size: 0.9rem;
+    color: rgba(253, 246, 227, 0.35);
+    margin-top: 4px;
+}
+.counter-tap {
+    font-size: 0.75rem;
+    color: rgba(253, 246, 227, 0.2);
+    margin-top: 10px;
+    letter-spacing: 1px;
+}
+
+/* CURRENT DHIKR TEXT */
+.current-dhikr-text {
+    font-family: "Scheherazade New", serif;
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    color: var(--gold);
+    text-align: center;
+    max-width: 500px;
+    line-height: 2;
+    margin: 4px 0 20px;
+    min-height: 3.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s;
+}
+
+/* ACTION BUTTONS */
+.actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+.act-btn {
+    background: rgba(201, 168, 76, 0.07);
+    border: 1px solid rgba(201, 168, 76, 0.2);
+    color: rgba(253, 246, 227, 0.6);
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: "Amiri", serif;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+.act-btn:hover {
+    background: rgba(201, 168, 76, 0.15);
+    color: var(--cream);
+    border-color: rgba(201, 168, 76, 0.4);
+}
+.act-btn.danger:hover {
+    background: rgba(200, 60, 60, 0.15);
+    border-color: rgba(200, 60, 60, 0.4);
+    color: #f87171;
+}
+.target-select {
+    background: rgba(201, 168, 76, 0.07);
+    border: 1px solid rgba(201, 168, 76, 0.2);
+    color: var(--cream);
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-family: "Amiri", serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    outline: none;
+}
+.target-select option {
+    background: #1c130a;
+}
+
+/* HISTORY */
+.history-section {
+    width: 100%;
+    max-width: 560px;
+    margin-top: 10px;
+}
+.history-title {
+    font-family: "Scheherazade New", serif;
+    font-size: 1.1rem;
+    color: var(--gold-dark);
+    text-align: center;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.history-title::before,
+.history-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(201, 168, 76, 0.18);
+}
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.history-item {
+    background: rgba(30, 20, 8, 0.7);
+    border: 1px solid rgba(201, 168, 76, 0.12);
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+.h-dhikr {
+    font-family: "Scheherazade New", serif;
+    font-size: 1rem;
+    color: var(--cream);
+    flex: 1;
+}
+.h-count {
+    font-size: 0.8rem;
+    color: var(--gold-dark);
+}
+.h-time {
+    font-size: 0.7rem;
+    color: rgba(253, 246, 227, 0.25);
+    direction: ltr;
+}
+
+/* DONE BANNER */
+.done-banner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: rgba(28, 19, 8, 0.97);
+    border: 1px solid var(--green);
+    border-radius: 20px;
+    padding: 32px 40px;
+    text-align: center;
+    z-index: 100;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 60px rgba(82, 183, 136, 0.2);
+    pointer-events: none;
+}
+.done-banner.show {
+    transform: translate(-50%, -50%) scale(1);
+    pointer-events: all;
+}
+.done-banner h2 {
+    font-family: "Scheherazade New", serif;
+    font-size: 2rem;
+    color: var(--green);
+    margin-bottom: 8px;
+}
+.done-banner p {
+    color: rgba(253, 246, 227, 0.5);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+    .counter-inner {
+        width: 185px;
+        height: 185px;
+    }
+    .counter-num {
+        font-size: 3.2rem;
+    }
+}

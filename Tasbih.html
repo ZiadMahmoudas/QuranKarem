@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عداد التسبيح</title>
+<link href="https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="Tasbih.css">
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back-btn" href="index.html">🏠</a>
+  <div class="topbar-title">عداد التسبيح</div>
+  <div class="session-display" id="sessionDisplay">الجلسة: 0</div>
+</div>
+
+<div class="page">
+
+  <!-- DHIKR SELECTOR -->
+  <div class="dhikr-selector">
+    <div class="selector-label">اختر الذكر</div>
+    <div class="dhikr-pills" id="dhikrPills"></div>
+  </div>
+
+  <div class="custom-row">
+    <input type="text" class="custom-input" id="customInput" placeholder="أدخل ذكراً مخصصاً...">
+    <button class="custom-set-btn" onclick="setCustomDhikr()">حفظ</button>
+  </div>
+
+  <!-- COUNTER -->
+  <div class="counter-wrap" style="width:240px;height:240px;margin:24px auto 0;">
+    <svg class="counter-svg" viewBox="0 0 240 240">
+      <defs>
+        <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#e8cc7a"/>
+          <stop offset="100%" stop-color="#c9a84c"/>
+        </linearGradient>
+      </defs>
+      <circle class="counter-ring-bg" cx="120" cy="120" r="112"/>
+      <circle class="counter-ring-fill" cx="120" cy="120" r="112" id="ringFill"
+        stroke-dasharray="703.7" stroke-dashoffset="703.7"/>
+    </svg>
+    <div class="counter-inner" id="counterBtn" onclick="tick()">
+      <span class="counter-num" id="counterNum">٠</span>
+      <span class="counter-of" id="counterOf">من ٣٣</span>
+      <span class="counter-tap">اضغط للتسبيح</span>
+    </div>
+  </div>
+
+  <!-- DHIKR TEXT -->
+  <div class="current-dhikr-text" id="dhikrText">سُبْحَانَ اللهِ</div>
+
+  <!-- ACTIONS -->
+  <div class="actions">
+    <select class="target-select" id="targetSelect" onchange="setTarget()">
+      <option value="33">٣٣ مرة</option>
+      <option value="100">١٠٠ مرة</option>
+      <option value="99">٩٩ مرة</option>
+      <option value="10">١٠ مرات</option>
+      <option value="7">٧ مرات</option>
+      <option value="500">٥٠٠ مرة</option>
+      <option value="1000">١٠٠٠ مرة</option>
+    </select>
+    <button class="act-btn" onclick="undo()">↩ تراجع</button>
+    <button class="act-btn danger" onclick="resetCounter()">↺ إعادة</button>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="history-section">
+    <div class="history-title">سجل الجلسة</div>
+    <div class="history-list" id="historyList">
+      <div style="text-align:center;color:rgba(253,246,227,.25);font-size:.85rem;padding:12px;">لا يوجد سجل بعد</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DONE BANNER -->
+<div class="done-banner" id="doneBanner">
+  <h2>🌿 اكتمل الذكر!</h2>
+  <p id="doneBannerText"></p>
+</div>
+
+<script src="Tasbih.js">
+
+</script>
+</body>
+</html>
