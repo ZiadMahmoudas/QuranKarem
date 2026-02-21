@@ -43,11 +43,11 @@
     <div class="topbar-info" id="topbarInfo"></div>
     
     <select class="reader-select" id="readerSelect">
-      <option value="https://server8.mp3quran.net/afs/">مشاري العفاسي</option>
-      <option value="https://server7.mp3quran.net/basit/">عبد الباسط عبد الصمد</option>
-      <option value="https://server7.mp3quran.net/shur/">سعود الشريم</option>
-      <option value="https://server13.mp3quran.net/husr/">محمود خليل الحصري</option>
-      <option value="https://server10.mp3quran.net/minsh/">محمد صديق المنشاوي</option>
+      <option value="7" data-full="https://server8.mp3quran.net/afs/">مشاري العفاسي</option>
+      <option value="2" data-full="https://server7.mp3quran.net/basit/">عبد الباسط عبد الصمد</option>
+      <option value="5" data-full="https://server7.mp3quran.net/shur/">سعود الشريم</option>
+      <option value="4" data-full="https://server13.mp3quran.net/husr/">محمود خليل الحصري</option>
+      <option value="9" data-full="https://server10.mp3quran.net/minsh/">محمد صديق المنشاوي</option>
     </select>
   </div>
   
@@ -93,9 +93,9 @@
         <span id="playerVerseInfo"></span>
       </div>
     </div>
-    <button class="ctrl-btn" id="prevBtn">⏮</button>
-    <button class="ctrl-btn play-btn" id="playBtn">▶</button>
     <button class="ctrl-btn" id="nextBtn">⏭</button>
+    <button class="ctrl-btn play-btn" id="playBtn">▶</button>
+    <button class="ctrl-btn" id="prevBtn">⏮</button>
     <div class="volume-wrap">
       <span class="volume-icon" id="muteBtn">🔊</span>
       <input type="range" class="vol-slider" id="volSlider" min="0" max="1" step="0.05" value="1">
@@ -107,6 +107,7 @@
 </div>
 
 <audio id="audioEl" preload="auto"></audio>
+<audio id="metaAudio" preload="metadata"></audio>
 
 <script src="reader.js">
 
