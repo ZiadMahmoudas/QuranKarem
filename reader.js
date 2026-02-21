@@ -136,7 +136,7 @@ async function loadSurah(n, autoplay=false, startAyah=0){
 // ── Render ──
 function renderSurah(){
   const s=SURAHS[currentSurah-1];
-  let html=`<div class="surah-header"><span class="surah-crown">❧ ✦ ❧</span><span class="surah-header-name">سورة ${s.name}</span><div class="surah-header-pills"><span class="pill">${s.type}</span><span class="pill">${s.ayat} آية</span><span class="pill">صفحة ${s.page}</span></div></div>`;
+  let html=`<a href="index.html" class="surah-header"><span class="surah-crown"><img src="images/logo.webp" alt="logo"/></span><span class="surah-header-name">سورة ${s.name}</span><div class="surah-header-pills"><span class="pill">${s.type}</span><span class="pill">${s.ayat} آية</span><span class="pill">صفحة ${s.page}</span></div></a>`;
   if(currentSurah!==9)html+=`<span class="basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>`;
   html+=`<div class="verses-container" id="versesContainer">`;
   verses.forEach((v,i)=>{
