@@ -319,11 +319,12 @@ async function onLogin(user) {
 }
 
 async function loadProfile(user) {
-  let { data: profile } = await db
+  let { data: profileArr } = await db
     .from('profiles')
     .select('*')
     .eq('id', user.id)
-    .maybeSingle(); // ✅ maybeSingle بدل single - ما يرميش error لو مفيش
+    .limit(1);
+  let profile = (profileArr && profileArr.length > 0) ? profileArr[0] : null;
 
   if (!profile) {
     const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'مجهول';
@@ -394,18 +395,17 @@ async function selectDhikr(d) {
 }
 
 // ── Load My Score ──
-// ✅ الدالة الصح - بتجيب عداد اليوزر الحالي للذكر المحدد
 async function loadMyScore() {
   if (!currentUser) return;
 
   const { data } = await db
     .from('tasbih_scores')
     .select('count')
-    .eq('user_id', currentUser.id)  // ✅ بنفلتر بالـ user_id الحقيقي
+    .eq('user_id', currentUser.id)
     .eq('dhikr', currentDhikr)
-    .maybeSingle(); // ✅ ما يرميش error لو مفيش سجل
+    .limit(1); // ✅ بدل maybeSingle اللي بترمي 406
 
-  myCount = data?.count ?? 0; // ✅ لو مفيش سجل يبقى صفر
+  myCount = (data && data.length > 0) ? (data[0].count ?? 0) : 0;
   document.getElementById('myCountDisplay').textContent = toAr(myCount);
 }
 
@@ -459,8 +459,10 @@ async function saveScore() {
 
   if (error) {
     console.error('Save error:', error);
+  } else {
+    // ✅ نعمل refresh بعد الحفظ علشان اللوحة تتحدث
+    await loadLeaderboard();
   }
-  // مش بنعمل loadLeaderboard هنا علشان الـ realtime بيتكفل بيه
 }
 
 // ── Leaderboard ──
