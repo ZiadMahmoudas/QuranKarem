@@ -393,21 +393,14 @@ async function selectDhikr(d) {
 }
 
 // ── Load My Score ──
-// ── Load My Score ──
 async function loadMyScore() {
   if (!currentUser) return;
-  
-  // استخدمنا maybeSingle() بدلاً من single()
-  const { data, error } = await db.from('tasbih_scores')
-    .select('count')
-    .eq('user_id', currentUser.id)
-    .eq('dhikr', currentDhikr)
-    .maybeSingle(); 
-
-  // لو مفيش داتا (أكونت جديد)، هيبقى العداد صفر بدون أخطاء
+  const { data } = await db.from('tasbih_scores')
+    .select('count').eq('user_id', currentUser.id).eq('dhikr', currentDhikr).single();
   myCount = data?.count || 0;
   document.getElementById('myCountDisplay').textContent = toAr(myCount);
 }
+
 // ── Tick / Count ──
 document.getElementById('tasbihBtn').onclick = tick;
 document.getElementById('undoBtn').onclick = undoTick;
@@ -455,14 +448,11 @@ async function saveScore() {
 }
 
 // ── Leaderboard ──
-// ── Leaderboard ──
 async function loadLeaderboard() {
   const lb = document.getElementById('leaderboard');
-  
-  // لاحظ إني ضفت user_id هنا عشان نعرف نقارن صح
   const { data, error } = await db
     .from('tasbih_scores')
-    .select('user_id, count, dhikr, profiles(display_name, avatar_url)')
+    .select('count, dhikr, profiles(display_name, avatar_url)')
     .eq('dhikr', currentDhikr)
     .order('count', { ascending: false })
     .limit(20);
@@ -472,26 +462,26 @@ async function loadLeaderboard() {
 
   lb.innerHTML = '';
   let myRank = null;
-  
   data.forEach((row, i) => {
     const rank = i + 1;
     const profile = row.profiles;
     const name = profile?.display_name || 'مجهول';
     const avatar = profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8b6914&color=fdf6e3`;
-    
-    // الطريقة الصحيحة 100% لمعرفة إن ده حسابك
     const isMe = currentUser && row.user_id === currentUser.id;
-    
-    if (isMe) myRank = rank;
+
+    // Check if me by comparing count + name (since we join profiles without user_id)
+    // Better: check by display_name match with currentProfile
+    const isMeByName = currentProfile && name === currentProfile.display_name && row.count === myCount;
+    if (isMeByName) myRank = rank;
 
     const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : '';
     const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : toAr(rank);
 
     const item = document.createElement('div');
-    item.className = `lb-item ${rankClass} ${isMe ? 'me' : ''}`;
+    item.className = `lb-item ${rankClass} ${isMeByName ? 'me' : ''}`;
     item.style.animationDelay = (i * 0.06) + 's';
     item.innerHTML = `
-      ${isMe ? '<span class="lb-me-badge">أنت</span>' : ''}
+      ${isMeByName ? '<span class="lb-me-badge">أنت</span>' : ''}
       <span class="lb-rank">${rankEmoji}</span>
       <img class="lb-avatar" src="${avatar}" alt="" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8b6914&color=fdf6e3'">
       <div class="lb-info">
@@ -507,11 +497,8 @@ async function loadLeaderboard() {
   });
 
   // Update my rank
-  const myRankEl = document.getElementById('myRankText');
   if (myRank) {
-    myRankEl.textContent = rankLabel(myRank);
-  } else {
-    myRankEl.textContent = 'ترتيبك: —'; // لو ملوش ترتيب حالياً
+    document.getElementById('myRankText').textContent = rankLabel(myRank);
   }
 }
 
