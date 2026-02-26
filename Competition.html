@@ -446,15 +446,17 @@ function undoTick() {
 }
 
 function scheduleSave() {
+  // كل ما حد يضغط، بنلغي الـ timer القديم ونبدأ من أول
+  // لما الضغط يوقف 1.5 ثانية بنحفظ — وبنبعت myCount اللحظي دايماً
   if (saveDebounce) clearTimeout(saveDebounce);
-  saveDebounce = setTimeout(saveScore, 1200);
+  saveDebounce = setTimeout(saveScore, 1500);
 }
 
-// ✅ الدالة الصح - بتعمل upsert بالـ user_id والـ dhikr كـ conflict key
 async function saveScore() {
   if (!currentUser) return;
   saveDebounce = null;
 
+  // myCount هو الـ source of truth دايماً
   const { error } = await db.from('tasbih_scores').upsert(
     {
       user_id: currentUser.id,
@@ -462,13 +464,14 @@ async function saveScore() {
       count: myCount,
       updated_at: new Date().toISOString()
     },
-    { onConflict: 'user_id,dhikr' } // ✅ الـ unique constraint اللي عملته في Supabase
+    { onConflict: 'user_id,dhikr' }
   );
 
   if (error) {
     console.error('Save error:', error);
+    showToast('⚠️ خطأ في الحفظ');
   } else {
-    // ✅ نعمل refresh بعد الحفظ علشان اللوحة تتحدث
+    // بعد الحفظ نحدث اللوحة
     await loadLeaderboard();
   }
 }
@@ -513,14 +516,12 @@ async function loadLeaderboard() {
       `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8b6914&color=fdf6e3`;
 
     // ✅ المقارنة الصحيحة الوحيدة - بالـ user_id مش بالاسم أو العدد
+    // ✅ المقارنة الصحيحة بالـ user_id فقط
     const isMe = currentUser && row.user_id === currentUser.id;
     if (isMe) {
       myRank = rank;
-      // ✅ تحديث الـ myCount من اللوحة علشان يكون محدث دايماً
-      if (row.count !== myCount && saveDebounce === null) {
-        myCount = row.count;
-        document.getElementById('myCountDisplay').textContent = toAr(myCount);
-      }
+      // ❌ مش بنلمس myCount هنا خالص - الـ local state هو المرجع
+      // اللوحة بتعرض البيانات بس، مش بتغير العداد
     }
 
     const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : '';
