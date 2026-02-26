@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مسابقة التسابيح</title>
+<link href="https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+
+
+<script>
+  const SUPABASE_URL = 'https://ieegdpteblepiifrwiid.supabase.co';  // ← غيّر هذا
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImllZWdkcHRlYmxlcGlpZnJ3aWlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTIwNTcsImV4cCI6MjA4NzY2ODA1N30.tCexpf4QUAqzBSj0bx_s26CDlJZlSsUi8zvroBaRLdk'; // ← غيّر هذا
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8cc7a;
+  --gold-dark: #8b6914;
+  --cream: #fdf6e3;
+  --brown: #0f0a05;
+  --brown2: #1c130a;
+  --brown3: #2e1e10;
+  --green: #52b788;
+  --green-dark: #2d6a4f;
+  --red: #ef4444;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; font-family:'Amiri',serif; background:var(--brown); color:var(--cream); overflow-x:hidden; }
+
+/* BG */
+body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 65%); pointer-events:none; z-index:0; }
+body::after { content:''; position:fixed; inset:0; background-image: repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(201,168,76,0.015) 40px,rgba(201,168,76,0.015) 41px), repeating-linear-gradient(-45deg,transparent,transparent 40px,rgba(201,168,76,0.015) 40px,rgba(201,168,76,0.015) 41px); pointer-events:none; z-index:0; }
+
+/* TOPBAR */
+.topbar { position:sticky; top:0; z-index:50; background:rgba(10,6,2,0.97); backdrop-filter:blur(14px); border-bottom:1px solid rgba(201,168,76,0.15); padding:12px 22px; display:flex; align-items:center; gap:12px; }
+.back-btn { background:rgba(201,168,76,0.09); border:1px solid rgba(201,168,76,0.22); color:var(--gold); width:36px; height:36px; border-radius:8px; cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; text-decoration:none; transition:all .2s; flex-shrink:0; }
+.back-btn:hover { background:rgba(201,168,76,0.18); }
+.topbar-title { font-family:'Scheherazade New',serif; font-size:1.35rem; color:var(--gold-light); flex:1; }
+.user-avatar { width:34px; height:34px; border-radius:50%; object-fit:cover; border:2px solid rgba(201,168,76,0.4); cursor:pointer; display:none; }
+.settings-btn { background:rgba(201,168,76,0.09); border:1px solid rgba(201,168,76,0.22); color:var(--gold); width:36px; height:36px; border-radius:8px; cursor:pointer; font-size:1rem; display:none; align-items:center; justify-content:center; transition:all .2s; }
+.settings-btn:hover { background:rgba(201,168,76,0.18); }
+
+/* ══ LOGIN SCREEN ══ */
+.login-screen { position:relative; z-index:1; min-height:calc(100vh - 61px); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 20px; text-align:center; }
+.login-icon { font-size:4rem; margin-bottom:16px; animation:float 3s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+.login-title { font-family:'Scheherazade New',serif; font-size:clamp(1.8rem,4vw,2.8rem); color:var(--gold-light); margin-bottom:8px; }
+.login-desc { color:rgba(253,246,227,.45); font-size:1rem; max-width:380px; line-height:1.8; margin-bottom:32px; }
+.google-btn { display:inline-flex; align-items:center; gap:12px; background:white; color:#1f1f1f; border:none; padding:14px 28px; border-radius:12px; font-size:1.05rem; font-family:'Amiri',serif; cursor:pointer; transition:all .25s; box-shadow:0 4px 20px rgba(0,0,0,0.4); font-weight:700; }
+.google-btn:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,0,0,0.5); }
+.google-btn img { width:22px; height:22px; }
+.login-note { font-size:.78rem; color:rgba(253,246,227,.25); margin-top:16px; }
+
+/* ══ MAIN APP ══ */
+.app-screen { display:none; position:relative; z-index:1; }
+
+/* HERO */
+.hero { text-align:center; padding:32px 20px 20px; }
+.hero-crown { font-size:1.6rem; color:rgba(201,168,76,.3); letter-spacing:12px; display:block; margin-bottom:6px; }
+.hero-title { font-family:'Scheherazade New',serif; font-size:clamp(1.8rem,4vw,2.6rem); color:var(--gold-light); }
+.hero-desc { color:rgba(253,246,227,.4); font-size:.85rem; margin-top:6px; }
+
+/* MY SCORE CARD */
+.my-score-section { max-width:700px; margin:20px auto; padding:0 16px; }
+.my-score-card { background:linear-gradient(135deg,rgba(50,32,12,0.95),rgba(28,18,6,0.98)); border:1.5px solid rgba(201,168,76,0.4); border-radius:20px; padding:24px; display:flex; align-items:center; gap:20px; position:relative; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.5); }
+.my-score-card::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 20% 50%,rgba(201,168,76,0.08),transparent 60%); pointer-events:none; }
+.my-avatar { width:56px; height:56px; border-radius:50%; object-fit:cover; border:2px solid var(--gold); flex-shrink:0; }
+.my-score-info { flex:1; min-width:0; }
+.my-name { font-family:'Scheherazade New',serif; font-size:1.2rem; color:var(--cream); display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.my-rank-badge { display:inline-flex; align-items:center; gap:5px; font-size:.75rem; color:var(--gold); margin-top:3px; }
+.my-count-big { font-family:'Scheherazade New',serif; font-size:2.8rem; color:var(--gold-light); font-weight:700; line-height:1; flex-shrink:0; }
+.my-count-label { font-size:.7rem; color:rgba(253,246,227,.3); display:block; text-align:center; }
+
+/* COUNTER BTN */
+.counter-section { max-width:700px; margin:0 auto 20px; padding:0 16px; display:flex; gap:12px; align-items:stretch; }
+.tasbih-btn { flex:1; background:linear-gradient(135deg,var(--gold-dark),var(--gold)); border:none; color:var(--brown); border-radius:16px; padding:18px; font-family:'Scheherazade New',serif; font-size:1.5rem; cursor:pointer; transition:all .15s; box-shadow:0 6px 24px rgba(201,168,76,0.3); display:flex; flex-direction:column; align-items:center; gap:4px; user-select:none; -webkit-tap-highlight-color:transparent; }
+.tasbih-btn:active { transform:scale(.97); box-shadow:0 2px 12px rgba(201,168,76,0.2); }
+.tasbih-btn.pulse { animation:btnPulse .25s ease; }
+@keyframes btnPulse { 0%{box-shadow:0 6px 24px rgba(201,168,76,0.3)} 50%{box-shadow:0 6px 40px rgba(201,168,76,0.6)} 100%{box-shadow:0 6px 24px rgba(201,168,76,0.3)} }
+.tasbih-btn-sub { font-size:.75rem; opacity:.7; font-family:'Amiri',serif; }
+.undo-btn { background:rgba(201,168,76,0.07); border:1px solid rgba(201,168,76,0.2); color:rgba(253,246,227,.5); border-radius:16px; padding:18px 16px; cursor:pointer; font-size:1.2rem; transition:all .2s; display:flex; align-items:center; }
+.undo-btn:hover { background:rgba(201,168,76,0.13); color:var(--cream); }
+
+/* DHIKR SELECT */
+.dhikr-pick { max-width:700px; margin:0 auto 24px; padding:0 16px; }
+.dhikr-pick-label { font-size:.78rem; color:rgba(253,246,227,.35); margin-bottom:8px; text-align:center; }
+.dhikr-options { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+.dhikr-opt { background:rgba(201,168,76,0.06); border:1px solid rgba(201,168,76,0.18); color:rgba(253,246,227,.5); padding:6px 14px; border-radius:30px; cursor:pointer; font-family:'Scheherazade New',serif; font-size:.95rem; transition:all .2s; user-select:none; }
+.dhikr-opt:hover { border-color:rgba(201,168,76,0.35); color:var(--cream); }
+.dhikr-opt.active { background:rgba(201,168,76,0.15); border-color:var(--gold); color:var(--gold-light); }
+
+/* DIVIDER */
+.section-divider { max-width:700px; margin:0 auto 20px; padding:0 16px; }
+.divider-line { display:flex; align-items:center; gap:12px; }
+.divider-line::before,.divider-line::after { content:''; flex:1; height:1px; background:rgba(201,168,76,0.15); }
+.divider-text { font-family:'Scheherazade New',serif; font-size:1.05rem; color:var(--gold-dark); white-space:nowrap; }
+
+/* LEADERBOARD */
+.leaderboard { max-width:700px; margin:0 auto; padding:0 16px 80px; }
+.lb-item { display:flex; align-items:center; gap:14px; background:linear-gradient(145deg,rgba(30,18,6,0.9),rgba(20,12,4,0.95)); border:1px solid rgba(201,168,76,0.12); border-radius:14px; padding:14px 16px; margin-bottom:10px; transition:all .25s; position:relative; overflow:hidden; }
+.lb-item:hover { border-color:rgba(201,168,76,0.25); }
+.lb-item.me { border-color:rgba(201,168,76,0.45); background:linear-gradient(145deg,rgba(50,30,10,0.9),rgba(30,18,6,0.95)); }
+.lb-item.rank-1 { border-color:rgba(255,215,0,0.5); background:linear-gradient(145deg,rgba(60,40,8,0.95),rgba(35,22,5,0.98)); }
+.lb-item.rank-2 { border-color:rgba(192,192,192,0.4); }
+.lb-item.rank-3 { border-color:rgba(205,127,50,0.4); }
+
+.lb-rank { font-family:'Scheherazade New',serif; font-size:1.4rem; width:38px; text-align:center; flex-shrink:0; }
+.rank-1 .lb-rank { color:#ffd700; text-shadow:0 0 12px rgba(255,215,0,0.5); }
+.rank-2 .lb-rank { color:#c0c0c0; }
+.rank-3 .lb-rank { color:#cd7f32; }
+.lb-item:not(.rank-1):not(.rank-2):not(.rank-3) .lb-rank { color:rgba(253,246,227,.3); font-size:1rem; }
+
+.lb-avatar { width:44px; height:44px; border-radius:50%; object-fit:cover; border:1.5px solid rgba(201,168,76,0.3); flex-shrink:0; }
+.lb-info { flex:1; min-width:0; }
+.lb-name { font-family:'Scheherazade New',serif; font-size:1.05rem; color:var(--cream); display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lb-dhikr { font-size:.72rem; color:rgba(253,246,227,.3); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; }
+.lb-count { font-family:'Scheherazade New',serif; font-size:1.5rem; color:var(--gold-light); font-weight:700; flex-shrink:0; }
+.lb-count-label { font-size:.65rem; color:rgba(253,246,227,.25); display:block; text-align:center; }
+
+.lb-me-badge { position:absolute; top:6px; left:10px; font-size:.6rem; background:rgba(201,168,76,0.15); border:1px solid rgba(201,168,76,0.3); border-radius:10px; padding:1px 6px; color:var(--gold); }
+.lb-empty { text-align:center; padding:50px 20px; color:rgba(253,246,227,.3); font-size:1rem; }
+.lb-loading { text-align:center; padding:40px; }
+.lb-dot { display:inline-block; width:8px; height:8px; background:var(--gold); border-radius:50%; margin:0 3px; animation:bounce 1.2s infinite; }
+.lb-dot:nth-child(2){animation-delay:.18s}
+.lb-dot:nth-child(3){animation-delay:.36s}
+@keyframes bounce{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(-9px);opacity:1}}
+
+/* SETTINGS MODAL */
+.modal-bg { position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(6px); z-index:200; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .3s; }
+.modal-bg.open { opacity:1; pointer-events:all; }
+.modal { background:linear-gradient(145deg,#1c130a,#120d05); border:1px solid rgba(201,168,76,0.35); border-radius:20px; padding:32px; width:90%; max-width:380px; transform:scale(.92); transition:transform .35s cubic-bezier(.34,1.56,.64,1); }
+.modal-bg.open .modal { transform:scale(1); }
+.modal-title { font-family:'Scheherazade New',serif; font-size:1.5rem; color:var(--gold-light); text-align:center; margin-bottom:24px; }
+.modal-avatar { display:block; width:72px; height:72px; border-radius:50%; object-fit:cover; border:2px solid var(--gold); margin:0 auto 20px; }
+.form-label { font-size:.82rem; color:rgba(253,246,227,.45); margin-bottom:6px; display:block; }
+.form-input { width:100%; background:rgba(201,168,76,0.07); border:1px solid rgba(201,168,76,0.22); color:var(--cream); padding:11px 14px; border-radius:10px; font-family:'Amiri',serif; font-size:1rem; outline:none; text-align:right; transition:border-color .2s; margin-bottom:16px; }
+.form-input:focus { border-color:var(--gold); }
+.form-input::placeholder { color:rgba(253,246,227,.2); }
+.btn-primary { width:100%; background:linear-gradient(135deg,var(--gold-dark),var(--gold)); border:none; color:var(--brown); padding:13px; border-radius:10px; font-family:'Amiri',serif; font-size:1.05rem; font-weight:700; cursor:pointer; transition:opacity .2s; margin-bottom:10px; }
+.btn-primary:hover { opacity:.88; }
+.btn-secondary { width:100%; background:transparent; border:1px solid rgba(255,255,255,.1); color:rgba(253,246,227,.4); padding:11px; border-radius:10px; font-family:'Amiri',serif; font-size:.95rem; cursor:pointer; transition:all .2s; }
+.btn-secondary:hover { border-color:rgba(255,255,255,.2); color:rgba(253,246,227,.7); }
+.btn-danger { width:100%; background:transparent; border:1px solid rgba(239,68,68,.3); color:rgba(239,68,68,.6); padding:11px; border-radius:10px; font-family:'Amiri',serif; font-size:.95rem; cursor:pointer; transition:all .2s; margin-top:8px; }
+.btn-danger:hover { background:rgba(239,68,68,.1); color:var(--red); border-color:var(--red); }
+
+/* TOAST */
+.toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px); background:rgba(20,12,4,0.97); border:1px solid var(--gold); border-radius:12px; padding:12px 22px; font-family:'Scheherazade New',serif; font-size:1rem; color:var(--gold-light); opacity:0; pointer-events:none; transition:all .35s; z-index:300; white-space:nowrap; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* SCROLL AREA */
+.app-screen { padding-bottom: 20px; }
+
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.lb-item { animation:fadeIn .3s ease both; }
+
+@media(max-width:480px) {
+  .my-count-big { font-size:2.2rem; }
+  .tasbih-btn { font-size:1.3rem; padding:16px; }
+  .counter-section { gap:8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a class="back-btn" href="index.html">🏠</a>
+  <div class="topbar-title">🏆 مسابقة التسابيح</div>
+  <img class="user-avatar" id="userAvatar" src="" alt="">
+  <button class="settings-btn" id="settingsBtn" title="الإعدادات">⚙️</button>
+</div>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-icon">📿</div>
+  <div class="login-title">مسابقة التسابيح</div>
+  <p class="login-desc">سابق إخوانك وأحبابك في ذكر الله — سجّل دخولك بحساب جوجل للانضمام للمسابقة</p>
+  <button class="google-btn" id="googleLoginBtn">
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+    تسجيل الدخول بـ Google
+  </button>
+  <div class="login-note">بياناتك آمنة — يُستخدم الحساب فقط لعرض الاسم والصورة في الترتيب</div>
+</div>
+
+<!-- ══ APP SCREEN ══ -->
+<div class="app-screen" id="appScreen">
+
+  <!-- HERO -->
+  <div class="hero">
+    <span class="hero-crown">❧ ✦ ❧</span>
+    <div class="hero-title">مسابقة التسابيح</div>
+    <div class="hero-desc">كل ضغطة ذكر لله · تنافس مع الأحباب</div>
+  </div>
+
+  <!-- MY SCORE -->
+  <div class="my-score-section">
+    <div class="my-score-card">
+      <img class="my-avatar" id="myAvatar" src="" alt="">
+      <div class="my-score-info">
+        <span class="my-name" id="myName">—</span>
+        <div class="my-rank-badge">
+          <span id="myRankText">ترتيبك: —</span>
+        </div>
+      </div>
+      <div style="text-align:center">
+        <div class="my-count-big" id="myCountDisplay">٠</div>
+        <span class="my-count-label">تسبيحة</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DHIKR SELECTOR -->
+  <div class="dhikr-pick">
+    <div class="dhikr-pick-label">اختر الذكر</div>
+    <div class="dhikr-options" id="dhikrOptions"></div>
+  </div>
+
+  <!-- COUNTER BUTTON -->
+  <div class="counter-section">
+    <button class="tasbih-btn" id="tasbihBtn">
+      سُبْحَانَ اللهِ
+      <span class="tasbih-btn-sub">اضغط للتسبيح ← Space</span>
+    </button>
+    <button class="undo-btn" id="undoBtn" title="تراجع">↩</button>
+  </div>
+
+  <!-- LEADERBOARD DIVIDER -->
+  <div class="section-divider">
+    <div class="divider-line">
+      <span class="divider-text">🏆 لوحة الشرف</span>
+    </div>
+  </div>
+
+  <!-- LEADERBOARD -->
+  <div class="leaderboard" id="leaderboard">
+    <div class="lb-loading"><span class="lb-dot"></span><span class="lb-dot"></span><span class="lb-dot"></span></div>
+  </div>
+
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-bg" id="settingsModal">
+  <div class="modal">
+    <div class="modal-title">⚙️ الإعدادات</div>
+    <img class="modal-avatar" id="modalAvatar" src="" alt="">
+    <label class="form-label">اسم العرض</label>
+    <input type="text" class="form-input" id="displayNameInput" placeholder="اكتب اسمك..." maxlength="30">
+    <button class="btn-primary" id="saveNameBtn">حفظ الاسم</button>
+    <button class="btn-secondary" id="closeModalBtn">إلغاء</button>
+    <button class="btn-danger" id="signOutBtn">تسجيل الخروج</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ── State ──
+let currentUser = null;
+let currentProfile = null;
+let myCount = 0;
+let currentDhikr = 'سُبْحَانَ اللهِ';
+let lbRefreshTimer = null;
+let pendingCount = 0;
+let saveDebounce = null;
+
+const ADHKAR = [
+  'سُبْحَانَ اللهِ',
+  'الْحَمْدُ لِلَّهِ',
+  'اللهُ أَكْبَرُ',
+  'لَا إِلَهَ إِلَّا اللهُ',
+  'أَسْتَغْفِرُ اللهَ',
+  'سُبْحَانَ اللهِ وَبِحَمْدِهِ',
+];
+
+// ── Helpers ──
+function toAr(n) { return String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]); }
+
+function showToast(msg, duration = 2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+function rankLabel(n) {
+  if (n === 1) return '🥇 المركز الأول';
+  if (n === 2) return '🥈 المركز الثاني';
+  if (n === 3) return '🥉 المركز الثالث';
+  return `المركز ${toAr(n)}`;
+}
+
+// ── Init Supabase Auth ──
+async function init() {
+  const { data: { session } } = await db.auth.getSession();
+  if (session) {
+    await onLogin(session.user);
+  }
+
+  db.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      await onLogin(session.user);
+    } else if (event === 'SIGNED_OUT') {
+      onLogout();
+    }
+  });
+}
+
+// ── Google Login ──
+document.getElementById('googleLoginBtn').onclick = async () => {
+  const { error } = await db.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.href }
+  });
+  if (error) showToast('حدث خطأ: ' + error.message);
+};
+
+// ── On Login ──
+async function onLogin(user) {
+  currentUser = user;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appScreen').style.display = 'block';
+  document.getElementById('userAvatar').style.display = 'block';
+  document.getElementById('settingsBtn').style.display = 'flex';
+
+  // Load or create profile
+  await loadProfile(user);
+  buildDhikrOptions();
+  await loadMyScore();
+  await loadLeaderboard();
+  startLbAutoRefresh();
+}
+
+async function loadProfile(user) {
+  let { data: profile } = await db.from('profiles').select('*').eq('id', user.id).single();
+  if (!profile) {
+    // Create profile
+    const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'مجهول';
+    const avatar = user.user_metadata?.avatar_url || '';
+    await db.from('profiles').insert({ id: user.id, display_name: name, avatar_url: avatar });
+    profile = { id: user.id, display_name: name, avatar_url: avatar };
+  }
+  currentProfile = profile;
+  updateProfileUI(profile);
+}
+
+function updateProfileUI(profile) {
+  const avatar = profile.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.display_name)}&background=8b6914&color=fdf6e3`;
+  document.getElementById('userAvatar').src = avatar;
+  document.getElementById('myAvatar').src = avatar;
+  document.getElementById('myName').textContent = profile.display_name;
+  document.getElementById('modalAvatar').src = avatar;
+  document.getElementById('displayNameInput').value = profile.display_name;
+}
+
+// ── On Logout ──
+function onLogout() {
+  currentUser = null;
+  currentProfile = null;
+  myCount = 0;
+  clearInterval(lbRefreshTimer);
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('appScreen').style.display = 'none';
+  document.getElementById('userAvatar').style.display = 'none';
+  document.getElementById('settingsBtn').style.display = 'none';
+}
+
+// ── Dhikr Options ──
+function buildDhikrOptions() {
+  const container = document.getElementById('dhikrOptions');
+  container.innerHTML = '';
+  ADHKAR.forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'dhikr-opt' + (d === currentDhikr ? ' active' : '');
+    el.textContent = d;
+    el.onclick = () => selectDhikr(d);
+    container.appendChild(el);
+  });
+}
+
+async function selectDhikr(d) {
+  currentDhikr = d;
+  document.querySelectorAll('.dhikr-opt').forEach(el => el.classList.toggle('active', el.textContent === d));
+  document.getElementById('tasbihBtn').childNodes[0].textContent = d + '\n';
+  document.querySelector('.tasbih-btn-sub').textContent = 'اضغط للتسبيح ← Space';
+  await loadMyScore();
+  await loadLeaderboard();
+}
+
+// ── Load My Score ──
+async function loadMyScore() {
+  if (!currentUser) return;
+  const { data } = await db.from('tasbih_scores')
+    .select('count').eq('user_id', currentUser.id).eq('dhikr', currentDhikr).single();
+  myCount = data?.count || 0;
+  document.getElementById('myCountDisplay').textContent = toAr(myCount);
+}
+
+// ── Tick / Count ──
+document.getElementById('tasbihBtn').onclick = tick;
+document.getElementById('undoBtn').onclick = undoTick;
+document.addEventListener('keydown', e => { if (e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); tick(); } });
+
+function tick() {
+  if (!currentUser) return;
+  myCount++;
+  pendingCount++;
+  document.getElementById('myCountDisplay').textContent = toAr(myCount);
+
+  // Animate
+  const btn = document.getElementById('tasbihBtn');
+  btn.classList.remove('pulse');
+  void btn.offsetWidth;
+  btn.classList.add('pulse');
+  if (navigator.vibrate) navigator.vibrate(25);
+
+  scheduleSave();
+}
+
+function undoTick() {
+  if (!currentUser || myCount <= 0) return;
+  myCount--;
+  pendingCount = Math.max(0, pendingCount - 1);
+  document.getElementById('myCountDisplay').textContent = toAr(myCount);
+  scheduleSave();
+}
+
+function scheduleSave() {
+  if (saveDebounce) clearTimeout(saveDebounce);
+  saveDebounce = setTimeout(saveScore, 1500);
+}
+
+async function saveScore() {
+  if (!currentUser) return;
+  const { error } = await db.from('tasbih_scores').upsert(
+    { user_id: currentUser.id, dhikr: currentDhikr, count: myCount, updated_at: new Date().toISOString() },
+    { onConflict: 'user_id,dhikr' }
+  );
+  if (!error) {
+    pendingCount = 0;
+    await loadLeaderboard(); // refresh after save
+  }
+}
+
+// ── Leaderboard ──
+async function loadLeaderboard() {
+  const lb = document.getElementById('leaderboard');
+  const { data, error } = await db
+    .from('tasbih_scores')
+    .select('count, dhikr, profiles(display_name, avatar_url)')
+    .eq('dhikr', currentDhikr)
+    .order('count', { ascending: false })
+    .limit(20);
+
+  if (error || !data) { lb.innerHTML = '<div class="lb-empty">تعذر تحميل الترتيب</div>'; return; }
+  if (data.length === 0) { lb.innerHTML = '<div class="lb-empty">لا يوجد مشاركون بعد — كن الأول! 🌟</div>'; return; }
+
+  lb.innerHTML = '';
+  let myRank = null;
+  data.forEach((row, i) => {
+    const rank = i + 1;
+    const profile = row.profiles;
+    const name = profile?.display_name || 'مجهول';
+    const avatar = profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8b6914&color=fdf6e3`;
+    const isMe = currentUser && row.user_id === currentUser.id;
+
+    // Check if me by comparing count + name (since we join profiles without user_id)
+    // Better: check by display_name match with currentProfile
+    const isMeByName = currentProfile && name === currentProfile.display_name && row.count === myCount;
+    if (isMeByName) myRank = rank;
+
+    const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : '';
+    const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : toAr(rank);
+
+    const item = document.createElement('div');
+    item.className = `lb-item ${rankClass} ${isMeByName ? 'me' : ''}`;
+    item.style.animationDelay = (i * 0.06) + 's';
+    item.innerHTML = `
+      ${isMeByName ? '<span class="lb-me-badge">أنت</span>' : ''}
+      <span class="lb-rank">${rankEmoji}</span>
+      <img class="lb-avatar" src="${avatar}" alt="" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8b6914&color=fdf6e3'">
+      <div class="lb-info">
+        <span class="lb-name">${name}</span>
+        <span class="lb-dhikr">${currentDhikr}</span>
+      </div>
+      <div style="text-align:center">
+        <div class="lb-count">${toAr(row.count)}</div>
+        <span class="lb-count-label">تسبيحة</span>
+      </div>
+    `;
+    lb.appendChild(item);
+  });
+
+  // Update my rank
+  if (myRank) {
+    document.getElementById('myRankText').textContent = rankLabel(myRank);
+  }
+}
+
+function startLbAutoRefresh() {
+  clearInterval(lbRefreshTimer);
+  lbRefreshTimer = setInterval(loadLeaderboard, 30000); // refresh every 30s
+}
+
+// ── Real-time subscription ──
+function subscribeRealtime() {
+  db.channel('tasbih_scores_changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'tasbih_scores' }, () => {
+      loadLeaderboard();
+    })
+    .subscribe();
+}
+
+// ── Settings Modal ──
+document.getElementById('settingsBtn').onclick = () => document.getElementById('settingsModal').classList.add('open');
+document.getElementById('closeModalBtn').onclick = () => document.getElementById('settingsModal').classList.remove('open');
+document.getElementById('settingsModal').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.classList.remove('open'); });
+
+document.getElementById('saveNameBtn').onclick = async () => {
+  const name = document.getElementById('displayNameInput').value.trim();
+  if (!name) return showToast('⚠️ ادخل اسماً');
+  if (!currentUser) return;
+  const { error } = await db.from('profiles').update({ display_name: name }).eq('id', currentUser.id);
+  if (!error) {
+    currentProfile.display_name = name;
+    document.getElementById('myName').textContent = name;
+    document.getElementById('settingsModal').classList.remove('open');
+    showToast('✓ تم حفظ الاسم');
+    await loadLeaderboard();
+  } else showToast('حدث خطأ: ' + error.message);
+};
+
+document.getElementById('signOutBtn').onclick = async () => {
+  if (confirm('هل تريد تسجيل الخروج؟')) {
+    if (saveDebounce) { clearTimeout(saveDebounce); await saveScore(); }
+    await db.auth.signOut();
+  }
+};
+
+// ── Init ──
+init().then(() => {
+  if (currentUser) subscribeRealtime();
+});
+
+db.auth.onAuthStateChange((event) => {
+  if (event === 'SIGNED_IN') subscribeRealtime();
+});
+</script>
+</body>
+</html>
