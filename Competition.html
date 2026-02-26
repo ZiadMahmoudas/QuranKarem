@@ -6,9 +6,10 @@
 <title>مسابقة التسابيح</title>
 <link href="https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 
+
 <script>
-  const SUPABASE_URL = 'https://ieegdpteblepiifrwiid.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImllZWdkcHRlYmxlcGlpZnJ3aWlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTIwNTcsImV4cCI6MjA4NzY2ODA1N30.tCexpf4QUAqzBSj0bx_s26CDlJZlSsUi8zvroBaRLdk';
+  const SUPABASE_URL = 'https://ieegdpteblepiifrwiid.supabase.co';  // ← غيّر هذا
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImllZWdkcHRlYmxlcGlpZnJ3aWlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTIwNTcsImV4cCI6MjA4NzY2ODA1N30.tCexpf4QUAqzBSj0bx_s26CDlJZlSsUi8zvroBaRLdk'; // ← غيّر هذا
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -28,9 +29,11 @@
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body { height:100%; font-family:'Amiri',serif; background:var(--brown); color:var(--cream); overflow-x:hidden; }
 
+/* BG */
 body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 65%); pointer-events:none; z-index:0; }
 body::after { content:''; position:fixed; inset:0; background-image: repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(201,168,76,0.015) 40px,rgba(201,168,76,0.015) 41px), repeating-linear-gradient(-45deg,transparent,transparent 40px,rgba(201,168,76,0.015) 40px,rgba(201,168,76,0.015) 41px); pointer-events:none; z-index:0; }
 
+/* TOPBAR */
 .topbar { position:sticky; top:0; z-index:50; background:rgba(10,6,2,0.97); backdrop-filter:blur(14px); border-bottom:1px solid rgba(201,168,76,0.15); padding:12px 22px; display:flex; align-items:center; gap:12px; }
 .back-btn { background:rgba(201,168,76,0.09); border:1px solid rgba(201,168,76,0.22); color:var(--gold); width:36px; height:36px; border-radius:8px; cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; text-decoration:none; transition:all .2s; flex-shrink:0; }
 .back-btn:hover { background:rgba(201,168,76,0.18); }
@@ -39,6 +42,7 @@ body::after { content:''; position:fixed; inset:0; background-image: repeating-l
 .settings-btn { background:rgba(201,168,76,0.09); border:1px solid rgba(201,168,76,0.22); color:var(--gold); width:36px; height:36px; border-radius:8px; cursor:pointer; font-size:1rem; display:none; align-items:center; justify-content:center; transition:all .2s; }
 .settings-btn:hover { background:rgba(201,168,76,0.18); }
 
+/* ══ LOGIN SCREEN ══ */
 .login-screen { position:relative; z-index:1; min-height:calc(100vh - 61px); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 20px; text-align:center; }
 .login-icon { font-size:4rem; margin-bottom:16px; animation:float 3s ease-in-out infinite; }
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
@@ -49,13 +53,16 @@ body::after { content:''; position:fixed; inset:0; background-image: repeating-l
 .google-btn img { width:22px; height:22px; }
 .login-note { font-size:.78rem; color:rgba(253,246,227,.25); margin-top:16px; }
 
-.app-screen { display:none; position:relative; z-index:1; padding-bottom:20px; }
+/* ══ MAIN APP ══ */
+.app-screen { display:none; position:relative; z-index:1; }
 
+/* HERO */
 .hero { text-align:center; padding:32px 20px 20px; }
 .hero-crown { font-size:1.6rem; color:rgba(201,168,76,.3); letter-spacing:12px; display:block; margin-bottom:6px; }
 .hero-title { font-family:'Scheherazade New',serif; font-size:clamp(1.8rem,4vw,2.6rem); color:var(--gold-light); }
 .hero-desc { color:rgba(253,246,227,.4); font-size:.85rem; margin-top:6px; }
 
+/* MY SCORE CARD */
 .my-score-section { max-width:700px; margin:20px auto; padding:0 16px; }
 .my-score-card { background:linear-gradient(135deg,rgba(50,32,12,0.95),rgba(28,18,6,0.98)); border:1.5px solid rgba(201,168,76,0.4); border-radius:20px; padding:24px; display:flex; align-items:center; gap:20px; position:relative; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.5); }
 .my-score-card::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 20% 50%,rgba(201,168,76,0.08),transparent 60%); pointer-events:none; }
@@ -66,6 +73,7 @@ body::after { content:''; position:fixed; inset:0; background-image: repeating-l
 .my-count-big { font-family:'Scheherazade New',serif; font-size:2.8rem; color:var(--gold-light); font-weight:700; line-height:1; flex-shrink:0; }
 .my-count-label { font-size:.7rem; color:rgba(253,246,227,.3); display:block; text-align:center; }
 
+/* COUNTER BTN */
 .counter-section { max-width:700px; margin:0 auto 20px; padding:0 16px; display:flex; gap:12px; align-items:stretch; }
 .tasbih-btn { flex:1; background:linear-gradient(135deg,var(--gold-dark),var(--gold)); border:none; color:var(--brown); border-radius:16px; padding:18px; font-family:'Scheherazade New',serif; font-size:1.5rem; cursor:pointer; transition:all .15s; box-shadow:0 6px 24px rgba(201,168,76,0.3); display:flex; flex-direction:column; align-items:center; gap:4px; user-select:none; -webkit-tap-highlight-color:transparent; }
 .tasbih-btn:active { transform:scale(.97); box-shadow:0 2px 12px rgba(201,168,76,0.2); }
@@ -75,6 +83,7 @@ body::after { content:''; position:fixed; inset:0; background-image: repeating-l
 .undo-btn { background:rgba(201,168,76,0.07); border:1px solid rgba(201,168,76,0.2); color:rgba(253,246,227,.5); border-radius:16px; padding:18px 16px; cursor:pointer; font-size:1.2rem; transition:all .2s; display:flex; align-items:center; }
 .undo-btn:hover { background:rgba(201,168,76,0.13); color:var(--cream); }
 
+/* DHIKR SELECT */
 .dhikr-pick { max-width:700px; margin:0 auto 24px; padding:0 16px; }
 .dhikr-pick-label { font-size:.78rem; color:rgba(253,246,227,.35); margin-bottom:8px; text-align:center; }
 .dhikr-options { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
@@ -82,29 +91,34 @@ body::after { content:''; position:fixed; inset:0; background-image: repeating-l
 .dhikr-opt:hover { border-color:rgba(201,168,76,0.35); color:var(--cream); }
 .dhikr-opt.active { background:rgba(201,168,76,0.15); border-color:var(--gold); color:var(--gold-light); }
 
+/* DIVIDER */
 .section-divider { max-width:700px; margin:0 auto 20px; padding:0 16px; }
 .divider-line { display:flex; align-items:center; gap:12px; }
 .divider-line::before,.divider-line::after { content:''; flex:1; height:1px; background:rgba(201,168,76,0.15); }
 .divider-text { font-family:'Scheherazade New',serif; font-size:1.05rem; color:var(--gold-dark); white-space:nowrap; }
 
+/* LEADERBOARD */
 .leaderboard { max-width:700px; margin:0 auto; padding:0 16px 80px; }
-.lb-item { display:flex; align-items:center; gap:14px; background:linear-gradient(145deg,rgba(30,18,6,0.9),rgba(20,12,4,0.95)); border:1px solid rgba(201,168,76,0.12); border-radius:14px; padding:14px 16px; margin-bottom:10px; transition:all .25s; position:relative; overflow:hidden; animation:fadeIn .3s ease both; }
+.lb-item { display:flex; align-items:center; gap:14px; background:linear-gradient(145deg,rgba(30,18,6,0.9),rgba(20,12,4,0.95)); border:1px solid rgba(201,168,76,0.12); border-radius:14px; padding:14px 16px; margin-bottom:10px; transition:all .25s; position:relative; overflow:hidden; }
 .lb-item:hover { border-color:rgba(201,168,76,0.25); }
 .lb-item.me { border-color:rgba(201,168,76,0.45); background:linear-gradient(145deg,rgba(50,30,10,0.9),rgba(30,18,6,0.95)); }
 .lb-item.rank-1 { border-color:rgba(255,215,0,0.5); background:linear-gradient(145deg,rgba(60,40,8,0.95),rgba(35,22,5,0.98)); }
 .lb-item.rank-2 { border-color:rgba(192,192,192,0.4); }
 .lb-item.rank-3 { border-color:rgba(205,127,50,0.4); }
+
 .lb-rank { font-family:'Scheherazade New',serif; font-size:1.4rem; width:38px; text-align:center; flex-shrink:0; }
 .rank-1 .lb-rank { color:#ffd700; text-shadow:0 0 12px rgba(255,215,0,0.5); }
 .rank-2 .lb-rank { color:#c0c0c0; }
 .rank-3 .lb-rank { color:#cd7f32; }
 .lb-item:not(.rank-1):not(.rank-2):not(.rank-3) .lb-rank { color:rgba(253,246,227,.3); font-size:1rem; }
+
 .lb-avatar { width:44px; height:44px; border-radius:50%; object-fit:cover; border:1.5px solid rgba(201,168,76,0.3); flex-shrink:0; }
 .lb-info { flex:1; min-width:0; }
 .lb-name { font-family:'Scheherazade New',serif; font-size:1.05rem; color:var(--cream); display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .lb-dhikr { font-size:.72rem; color:rgba(253,246,227,.3); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; }
 .lb-count { font-family:'Scheherazade New',serif; font-size:1.5rem; color:var(--gold-light); font-weight:700; flex-shrink:0; }
 .lb-count-label { font-size:.65rem; color:rgba(253,246,227,.25); display:block; text-align:center; }
+
 .lb-me-badge { position:absolute; top:6px; left:10px; font-size:.6rem; background:rgba(201,168,76,0.15); border:1px solid rgba(201,168,76,0.3); border-radius:10px; padding:1px 6px; color:var(--gold); }
 .lb-empty { text-align:center; padding:50px 20px; color:rgba(253,246,227,.3); font-size:1rem; }
 .lb-loading { text-align:center; padding:40px; }
@@ -112,8 +126,8 @@ body::after { content:''; position:fixed; inset:0; background-image: repeating-l
 .lb-dot:nth-child(2){animation-delay:.18s}
 .lb-dot:nth-child(3){animation-delay:.36s}
 @keyframes bounce{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(-9px);opacity:1}}
-@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
+/* SETTINGS MODAL */
 .modal-bg { position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(6px); z-index:200; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .3s; }
 .modal-bg.open { opacity:1; pointer-events:all; }
 .modal { background:linear-gradient(145deg,#1c130a,#120d05); border:1px solid rgba(201,168,76,0.35); border-radius:20px; padding:32px; width:90%; max-width:380px; transform:scale(.92); transition:transform .35s cubic-bezier(.34,1.56,.64,1); }
@@ -131,8 +145,15 @@ body::after { content:''; position:fixed; inset:0; background-image: repeating-l
 .btn-danger { width:100%; background:transparent; border:1px solid rgba(239,68,68,.3); color:rgba(239,68,68,.6); padding:11px; border-radius:10px; font-family:'Amiri',serif; font-size:.95rem; cursor:pointer; transition:all .2s; margin-top:8px; }
 .btn-danger:hover { background:rgba(239,68,68,.1); color:var(--red); border-color:var(--red); }
 
+/* TOAST */
 .toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px); background:rgba(20,12,4,0.97); border:1px solid var(--gold); border-radius:12px; padding:12px 22px; font-family:'Scheherazade New',serif; font-size:1rem; color:var(--gold-light); opacity:0; pointer-events:none; transition:all .35s; z-index:300; white-space:nowrap; }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* SCROLL AREA */
+.app-screen { padding-bottom: 20px; }
+
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.lb-item { animation:fadeIn .3s ease both; }
 
 @media(max-width:480px) {
   .my-count-big { font-size:2.2rem; }
@@ -143,6 +164,7 @@ body::after { content:''; position:fixed; inset:0; background-image: repeating-l
 </head>
 <body>
 
+<!-- TOPBAR -->
 <div class="topbar">
   <a class="back-btn" href="index.html">🏠</a>
   <div class="topbar-title">🏆 مسابقة التسابيح</div>
@@ -150,6 +172,7 @@ body::after { content:''; position:fixed; inset:0; background-image: repeating-l
   <button class="settings-btn" id="settingsBtn" title="الإعدادات">⚙️</button>
 </div>
 
+<!-- ══ LOGIN SCREEN ══ -->
 <div class="login-screen" id="loginScreen">
   <div class="login-icon">📿</div>
   <div class="login-title">مسابقة التسابيح</div>
@@ -161,13 +184,17 @@ body::after { content:''; position:fixed; inset:0; background-image: repeating-l
   <div class="login-note">بياناتك آمنة — يُستخدم الحساب فقط لعرض الاسم والصورة في الترتيب</div>
 </div>
 
+<!-- ══ APP SCREEN ══ -->
 <div class="app-screen" id="appScreen">
+
+  <!-- HERO -->
   <div class="hero">
     <span class="hero-crown">❧ ✦ ❧</span>
     <div class="hero-title">مسابقة التسابيح</div>
     <div class="hero-desc">كل ضغطة ذكر لله · تنافس مع الأحباب</div>
   </div>
 
+  <!-- MY SCORE -->
   <div class="my-score-section">
     <div class="my-score-card">
       <img class="my-avatar" id="myAvatar" src="" alt="">
@@ -184,11 +211,13 @@ body::after { content:''; position:fixed; inset:0; background-image: repeating-l
     </div>
   </div>
 
+  <!-- DHIKR SELECTOR -->
   <div class="dhikr-pick">
     <div class="dhikr-pick-label">اختر الذكر</div>
     <div class="dhikr-options" id="dhikrOptions"></div>
   </div>
 
+  <!-- COUNTER BUTTON -->
   <div class="counter-section">
     <button class="tasbih-btn" id="tasbihBtn">
       سُبْحَانَ اللهِ
@@ -197,17 +226,21 @@ body::after { content:''; position:fixed; inset:0; background-image: repeating-l
     <button class="undo-btn" id="undoBtn" title="تراجع">↩</button>
   </div>
 
+  <!-- LEADERBOARD DIVIDER -->
   <div class="section-divider">
     <div class="divider-line">
       <span class="divider-text">🏆 لوحة الشرف</span>
     </div>
   </div>
 
+  <!-- LEADERBOARD -->
   <div class="leaderboard" id="leaderboard">
     <div class="lb-loading"><span class="lb-dot"></span><span class="lb-dot"></span><span class="lb-dot"></span></div>
   </div>
+
 </div>
 
+<!-- SETTINGS MODAL -->
 <div class="modal-bg" id="settingsModal">
   <div class="modal">
     <div class="modal-title">⚙️ الإعدادات</div>
@@ -220,6 +253,7 @@ body::after { content:''; position:fixed; inset:0; background-image: repeating-l
   </div>
 </div>
 
+<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
@@ -232,8 +266,8 @@ let currentProfile = null;
 let myCount = 0;
 let currentDhikr = 'سُبْحَانَ اللهِ';
 let lbRefreshTimer = null;
+let pendingCount = 0;
 let saveDebounce = null;
-let realtimeChannel = null;
 
 const ADHKAR = [
   'سُبْحَانَ اللهِ',
@@ -261,13 +295,8 @@ function rankLabel(n) {
   return `المركز ${toAr(n)}`;
 }
 
-// ── Init ──
+// ── Init Supabase Auth ──
 async function init() {
-  // امسح أي hash في الـ URL بعد الـ OAuth redirect بدون ما تعمل reload
-  if (window.location.hash && window.location.hash.includes('access_token')) {
-    history.replaceState(null, '', window.location.pathname);
-  }
-
   const { data: { session } } = await db.auth.getSession();
   if (session) {
     await onLogin(session.user);
@@ -284,58 +313,38 @@ async function init() {
 
 // ── Google Login ──
 document.getElementById('googleLoginBtn').onclick = async () => {
-  // Sign out أي session قديمة أولاً
-  await db.auth.signOut();
-
   const { error } = await db.auth.signInWithOAuth({
     provider: 'google',
-    options: {
-      redirectTo: 'https://qurankaream.netlify.app/competition',
-      queryParams: {
-        prompt: 'select_account' // ← يعرض قائمة اختيار الحساب دايماً
-      }
-    }
+    options: { redirectTo: window.location.href }
   });
   if (error) showToast('حدث خطأ: ' + error.message);
 };
 
 // ── On Login ──
 async function onLogin(user) {
-  // لو نفس اليوزر دخل تاني ما نعملش حاجة
-  if (currentUser && currentUser.id === user.id) return;
-
   currentUser = user;
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('appScreen').style.display = 'block';
   document.getElementById('userAvatar').style.display = 'block';
   document.getElementById('settingsBtn').style.display = 'flex';
 
+  // Load or create profile
   await loadProfile(user);
   buildDhikrOptions();
   await loadMyScore();
   await loadLeaderboard();
   startLbAutoRefresh();
-  subscribeRealtime();
 }
 
 async function loadProfile(user) {
-  let { data: profile } = await db
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .maybeSingle(); // ✅ maybeSingle بدل single - ما يرميش error لو مفيش
-
+  let { data: profile } = await db.from('profiles').select('*').eq('id', user.id).single();
   if (!profile) {
+    // Create profile
     const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'مجهول';
     const avatar = user.user_metadata?.avatar_url || '';
-    const { data: newProfile } = await db
-      .from('profiles')
-      .insert({ id: user.id, display_name: name, avatar_url: avatar })
-      .select()
-      .single();
-    profile = newProfile || { id: user.id, display_name: name, avatar_url: avatar };
+    await db.from('profiles').insert({ id: user.id, display_name: name, avatar_url: avatar });
+    profile = { id: user.id, display_name: name, avatar_url: avatar };
   }
-
   currentProfile = profile;
   updateProfileUI(profile);
 }
@@ -355,13 +364,10 @@ function onLogout() {
   currentProfile = null;
   myCount = 0;
   clearInterval(lbRefreshTimer);
-  if (realtimeChannel) { db.removeChannel(realtimeChannel); realtimeChannel = null; }
   document.getElementById('loginScreen').style.display = 'flex';
   document.getElementById('appScreen').style.display = 'none';
   document.getElementById('userAvatar').style.display = 'none';
   document.getElementById('settingsBtn').style.display = 'none';
-  document.getElementById('myCountDisplay').textContent = '٠';
-  document.getElementById('myRankText').textContent = 'ترتيبك: —';
 }
 
 // ── Dhikr Options ──
@@ -378,49 +384,35 @@ function buildDhikrOptions() {
 }
 
 async function selectDhikr(d) {
-  // حفظ الـ pending قبل التغيير
-  if (saveDebounce) { clearTimeout(saveDebounce); await saveScore(); }
-
   currentDhikr = d;
   document.querySelectorAll('.dhikr-opt').forEach(el => el.classList.toggle('active', el.textContent === d));
-
-  // تحديث نص الزر
-  const btn = document.getElementById('tasbihBtn');
-  btn.innerHTML = `${d}<br><span class="tasbih-btn-sub">اضغط للتسبيح ← Space</span>`;
-
-  // إعادة تحميل العداد الخاص بالذكر الجديد
+  document.getElementById('tasbihBtn').childNodes[0].textContent = d + '\n';
+  document.querySelector('.tasbih-btn-sub').textContent = 'اضغط للتسبيح ← Space';
   await loadMyScore();
   await loadLeaderboard();
 }
 
 // ── Load My Score ──
-// ✅ الدالة الصح - بتجيب عداد اليوزر الحالي للذكر المحدد
 async function loadMyScore() {
   if (!currentUser) return;
-
-  const { data } = await db
-    .from('tasbih_scores')
-    .select('count')
-    .eq('user_id', currentUser.id)  // ✅ بنفلتر بالـ user_id الحقيقي
-    .eq('dhikr', currentDhikr)
-    .maybeSingle(); // ✅ ما يرميش error لو مفيش سجل
-
-  myCount = data?.count ?? 0; // ✅ لو مفيش سجل يبقى صفر
+  const { data } = await db.from('tasbih_scores')
+    .select('count').eq('user_id', currentUser.id).eq('dhikr', currentDhikr).single();
+  myCount = data?.count || 0;
   document.getElementById('myCountDisplay').textContent = toAr(myCount);
 }
 
 // ── Tick / Count ──
 document.getElementById('tasbihBtn').onclick = tick;
 document.getElementById('undoBtn').onclick = undoTick;
-document.addEventListener('keydown', e => {
-  if (e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); tick(); }
-});
+document.addEventListener('keydown', e => { if (e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); tick(); } });
 
 function tick() {
   if (!currentUser) return;
   myCount++;
+  pendingCount++;
   document.getElementById('myCountDisplay').textContent = toAr(myCount);
 
+  // Animate
   const btn = document.getElementById('tasbihBtn');
   btn.classList.remove('pulse');
   void btn.offsetWidth;
@@ -433,97 +425,65 @@ function tick() {
 function undoTick() {
   if (!currentUser || myCount <= 0) return;
   myCount--;
+  pendingCount = Math.max(0, pendingCount - 1);
   document.getElementById('myCountDisplay').textContent = toAr(myCount);
   scheduleSave();
 }
 
 function scheduleSave() {
   if (saveDebounce) clearTimeout(saveDebounce);
-  saveDebounce = setTimeout(saveScore, 1200);
+  saveDebounce = setTimeout(saveScore, 1500);
 }
 
-// ✅ الدالة الصح - بتعمل upsert بالـ user_id والـ dhikr كـ conflict key
 async function saveScore() {
   if (!currentUser) return;
-  saveDebounce = null;
-
   const { error } = await db.from('tasbih_scores').upsert(
-    {
-      user_id: currentUser.id,
-      dhikr: currentDhikr,
-      count: myCount,
-      updated_at: new Date().toISOString()
-    },
-    { onConflict: 'user_id,dhikr' } // ✅ الـ unique constraint اللي عملته في Supabase
+    { user_id: currentUser.id, dhikr: currentDhikr, count: myCount, updated_at: new Date().toISOString() },
+    { onConflict: 'user_id,dhikr' }
   );
-
-  if (error) {
-    console.error('Save error:', error);
+  if (!error) {
+    pendingCount = 0;
+    await loadLeaderboard(); // refresh after save
   }
-  // مش بنعمل loadLeaderboard هنا علشان الـ realtime بيتكفل بيه
 }
 
 // ── Leaderboard ──
-// ✅ الحل الصح - بنجيب user_id من الـ tasbih_scores مش من الـ profiles
 async function loadLeaderboard() {
   const lb = document.getElementById('leaderboard');
-
   const { data, error } = await db
     .from('tasbih_scores')
-    .select(`
-      user_id,
-      count,
-      profiles (
-        display_name,
-        avatar_url
-      )
-    `)
+    .select('count, dhikr, profiles(display_name, avatar_url)')
     .eq('dhikr', currentDhikr)
     .order('count', { ascending: false })
     .limit(20);
 
-  if (error || !data) {
-    lb.innerHTML = '<div class="lb-empty">تعذر تحميل الترتيب</div>';
-    return;
-  }
-
-  if (data.length === 0) {
-    lb.innerHTML = '<div class="lb-empty">لا يوجد مشاركون بعد — كن الأول! 🌟</div>';
-    return;
-  }
+  if (error || !data) { lb.innerHTML = '<div class="lb-empty">تعذر تحميل الترتيب</div>'; return; }
+  if (data.length === 0) { lb.innerHTML = '<div class="lb-empty">لا يوجد مشاركون بعد — كن الأول! 🌟</div>'; return; }
 
   lb.innerHTML = '';
   let myRank = null;
-
   data.forEach((row, i) => {
     const rank = i + 1;
     const profile = row.profiles;
     const name = profile?.display_name || 'مجهول';
-    const avatar = profile?.avatar_url ||
-      `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8b6914&color=fdf6e3`;
-
-    // ✅ المقارنة الصحيحة الوحيدة - بالـ user_id مش بالاسم أو العدد
+    const avatar = profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8b6914&color=fdf6e3`;
     const isMe = currentUser && row.user_id === currentUser.id;
-    if (isMe) {
-      myRank = rank;
-      // ✅ تحديث الـ myCount من اللوحة علشان يكون محدث دايماً
-      if (row.count !== myCount && saveDebounce === null) {
-        myCount = row.count;
-        document.getElementById('myCountDisplay').textContent = toAr(myCount);
-      }
-    }
+
+    // Check if me by comparing count + name (since we join profiles without user_id)
+    // Better: check by display_name match with currentProfile
+    const isMeByName = currentProfile && name === currentProfile.display_name && row.count === myCount;
+    if (isMeByName) myRank = rank;
 
     const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : '';
     const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : toAr(rank);
 
     const item = document.createElement('div');
-    item.className = `lb-item ${rankClass} ${isMe ? 'me' : ''}`;
+    item.className = `lb-item ${rankClass} ${isMeByName ? 'me' : ''}`;
     item.style.animationDelay = (i * 0.06) + 's';
     item.innerHTML = `
-      ${isMe ? '<span class="lb-me-badge">أنت</span>' : ''}
+      ${isMeByName ? '<span class="lb-me-badge">أنت</span>' : ''}
       <span class="lb-rank">${rankEmoji}</span>
-      <img class="lb-avatar" src="${avatar}" alt=""
-           onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8b6914&color=fdf6e3'">
+      <img class="lb-avatar" src="${avatar}" alt="" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8b6914&color=fdf6e3'">
       <div class="lb-info">
         <span class="lb-name">${name}</span>
         <span class="lb-dhikr">${currentDhikr}</span>
@@ -536,70 +496,43 @@ async function loadLeaderboard() {
     lb.appendChild(item);
   });
 
-  // تحديث الترتيب
-  const myRankEl = document.getElementById('myRankText');
+  // Update my rank
   if (myRank) {
-    myRankEl.textContent = rankLabel(myRank);
-  } else {
-    // اليوزر موجود بس مش في الـ top 20 أو عدده صفر
-    myRankEl.textContent = myCount > 0 ? 'خارج الـ Top 20' : 'ترتيبك: —';
+    document.getElementById('myRankText').textContent = rankLabel(myRank);
   }
 }
 
 function startLbAutoRefresh() {
   clearInterval(lbRefreshTimer);
-  lbRefreshTimer = setInterval(loadLeaderboard, 30000);
+  lbRefreshTimer = setInterval(loadLeaderboard, 30000); // refresh every 30s
 }
 
-// ── Real-time ──
+// ── Real-time subscription ──
 function subscribeRealtime() {
-  // إزالة الـ channel القديم لو موجود
-  if (realtimeChannel) {
-    db.removeChannel(realtimeChannel);
-  }
-
-  realtimeChannel = db.channel('tasbih_realtime')
-    .on('postgres_changes', {
-      event: '*',
-      schema: 'public',
-      table: 'tasbih_scores',
-      filter: `dhikr=eq.${currentDhikr}` // ✅ بنسمع بس للذكر الحالي
-    }, () => {
+  db.channel('tasbih_scores_changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'tasbih_scores' }, () => {
       loadLeaderboard();
     })
     .subscribe();
 }
 
 // ── Settings Modal ──
-document.getElementById('settingsBtn').onclick = () =>
-  document.getElementById('settingsModal').classList.add('open');
-
-document.getElementById('closeModalBtn').onclick = () =>
-  document.getElementById('settingsModal').classList.remove('open');
-
-document.getElementById('settingsModal').addEventListener('click', e => {
-  if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
-});
+document.getElementById('settingsBtn').onclick = () => document.getElementById('settingsModal').classList.add('open');
+document.getElementById('closeModalBtn').onclick = () => document.getElementById('settingsModal').classList.remove('open');
+document.getElementById('settingsModal').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.classList.remove('open'); });
 
 document.getElementById('saveNameBtn').onclick = async () => {
   const name = document.getElementById('displayNameInput').value.trim();
   if (!name) return showToast('⚠️ ادخل اسماً');
   if (!currentUser) return;
-
-  const { error } = await db
-    .from('profiles')
-    .update({ display_name: name })
-    .eq('id', currentUser.id);
-
+  const { error } = await db.from('profiles').update({ display_name: name }).eq('id', currentUser.id);
   if (!error) {
     currentProfile.display_name = name;
     document.getElementById('myName').textContent = name;
     document.getElementById('settingsModal').classList.remove('open');
     showToast('✓ تم حفظ الاسم');
     await loadLeaderboard();
-  } else {
-    showToast('حدث خطأ: ' + error.message);
-  }
+  } else showToast('حدث خطأ: ' + error.message);
 };
 
 document.getElementById('signOutBtn').onclick = async () => {
@@ -609,8 +542,14 @@ document.getElementById('signOutBtn').onclick = async () => {
   }
 };
 
-// ── Start ──
-init();
+// ── Init ──
+init().then(() => {
+  if (currentUser) subscribeRealtime();
+});
+
+db.auth.onAuthStateChange((event) => {
+  if (event === 'SIGNED_IN') subscribeRealtime();
+});
 </script>
 </body>
 </html>
