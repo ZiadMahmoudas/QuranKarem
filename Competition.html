@@ -304,11 +304,19 @@ async function onLogin(user) {
   // لو نفس اليوزر دخل تاني ما نعملش حاجة
   if (currentUser && currentUser.id === user.id) return;
 
+  // reset الـ state عشان كل يوزر يبدأ نظيف
+  myCount = 0;
+  currentDhikr = 'سُبْحَانَ اللهِ';
+  clearInterval(lbRefreshTimer);
+  if (realtimeChannel) { db.removeChannel(realtimeChannel); realtimeChannel = null; }
+
   currentUser = user;
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('appScreen').style.display = 'block';
   document.getElementById('userAvatar').style.display = 'block';
   document.getElementById('settingsBtn').style.display = 'flex';
+  document.getElementById('myCountDisplay').textContent = '٠';
+  document.getElementById('myRankText').textContent = 'ترتيبك: —';
 
   await loadProfile(user);
   buildDhikrOptions();
